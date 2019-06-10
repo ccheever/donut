@@ -1,7 +1,7 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import MonacoEditor from "react-monaco-editor";
+import MonacoEditor from 'react-monaco-editor';
 
 export default function App() {
   return (
@@ -12,6 +12,9 @@ export default function App() {
         height={600}
         language="lua"
         theme="vs-dark"
+        onChange={async (newValue, e) => {
+          console.log('newValue=', newValue);
+        }}
         value={`
 function love.draw()
     love.graphics.print("Hello from Snackastle", 400, 300)
@@ -25,8 +28,8 @@ end
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
