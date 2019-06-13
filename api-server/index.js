@@ -17,7 +17,10 @@ let typeDefs = gql`
   }
 `;
 
-let code_ = null;
+let code_ = `
+function love.draw()
+  love.graphics.print("Hello from Donut", 400, 300)
+end`;
 
 // A map of functions which return data for the schema.
 let resolvers = {
@@ -53,8 +56,21 @@ async function startAsync(opts) {
 
   let app = express();
 
-  app.get('/code', async (req, res) => {
+  app.get('/game.lua', async (req, res) => {
+    res.type('text/lua+castle');
     res.send(code_);
+  });
+
+  app.get('/', async (req, res) => {
+    res.send(`
+  <html>
+  <pre>
+  <a href="/game.lua">/game.lua</a>
+  <a href="/graphql">/graphql</a>
+  <a href="http://localhost:19006">Editor</a>
+  </pre>
+  </html>
+    `);
   });
 
   server.applyMiddleware({ app });
