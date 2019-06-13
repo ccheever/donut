@@ -1,4 +1,4 @@
-let { ApolloServer, gql } = require('apollo-server');
+let { ApolloServer, gql } = require('apollo-server-express');
 let express = require('express');
 
 // The GraphQL schema
@@ -8,8 +8,12 @@ let typeDefs = gql`
     code: String
   }
 
+  type Code {
+    code: String
+  }
+
   type Mutation {
-    setCode(code: String!): String
+    setCode(code: String!): Code
   }
 `;
 
@@ -28,7 +32,9 @@ let resolvers = {
   Mutation: {
     setCode: async (_, { code }, context) => {
       code_ = code;
-      return code_;
+      return {
+        code: code_,
+      };
     },
   },
 };
@@ -45,10 +51,25 @@ async function startAsync(opts) {
     // onHealthCheck: () => fetch('https://fourtonfish.com/hellosalut/?mode=auto'),
   });
 
-  let { url } = await server.listen({ port });
-  console.log(`🚀 Server ready at ${url}`);
+  let app = express();
+
+  app.get('/code', async (req, res) => {
+    res.send(code_);
+  });
+
+  server.applyMiddleware({ app });
+
+  app.listen({ port }, () => {
+    console.log(`🚀 Server ready https://localhost:${port}/`);
+  });
+  return {
+    app,
+    server,
+  };
 }
 
 if (require.main === module) {
-  startAsync({ port: process.env.PORT || 4010 });
+  startAsync({ port: process.env.PORT || 4010 }).then(({ app, server }) => {
+    // app, server
+  });
 }
